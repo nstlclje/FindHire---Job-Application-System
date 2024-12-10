@@ -1,0 +1,54 @@
+CREATE TABLE HR (
+    hr_id INT AUTO_INCREMENT PRIMARY KEY,
+    hr_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL, 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE Jobs (
+    job_id INT AUTO_INCREMENT PRIMARY KEY,
+    hr_id INT NOT NULL,
+    job_title VARCHAR(255) NOT NULL,
+    job_description TEXT NOT NULL,
+    status ENUM('Open', 'Closed') DEFAULT 'Open',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (hr_id) REFERENCES HR(hr_id)
+);
+
+CREATE TABLE Applicants (
+    applicant_id INT AUTO_INCREMENT PRIMARY KEY,
+    applicant_name VARCHAR(200) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL, 
+    phone VARCHAR(20),
+    resume_pdf BLOB, 
+    resume_pdf_name VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE Applications (
+    application_id INT AUTO_INCREMENT PRIMARY KEY,
+    job_id INT NOT NULL,
+    resume_pdf BLOB,
+    resume_pdf_name VARCHAR(255),
+    applicant_id INT NOT NULL,
+    application_message TEXT, 
+    application_status ENUM('Pending', 'Accepted', 'Rejected') DEFAULT 'Pending',
+    applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (job_id) REFERENCES Jobs(job_id),
+    FOREIGN KEY (applicant_id) REFERENCES Applicants(applicant_id)
+);
+
+CREATE TABLE Messages (
+    message_id INT AUTO_INCREMENT PRIMARY KEY,
+    hr_id INT NOT NULL,
+    applicant_id INT NOT NULL,
+    message TEXT NOT NULL,
+    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    reply TEXT NOT NULL,
+    hr_reply TEXT NOT NULL,
+    FOREIGN KEY (hr_id) REFERENCES HR(hr_id),
+    FOREIGN KEY (applicant_id) REFERENCES Applicants(applicant_id)
+);
+
